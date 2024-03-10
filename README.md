@@ -1,0 +1,2 @@
+Windows Shell link specimens.
+
