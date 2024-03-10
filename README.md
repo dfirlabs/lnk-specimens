@@ -1,2 +1,2 @@
-Windows Shell link specimens.
+Windows Shell link (.lnk) specimens.
 
