@@ -5,9 +5,12 @@
 Requires Windows and pywin32.
 """
 
+import decimal
 import os
+import time
 
 import pythoncom
+import pywintypes
 
 from win32com import storagecon
 from win32com.propsys import propsys
@@ -40,16 +43,21 @@ if __name__ == '__main__':
 
   property_store = shortcut.QueryInterface(propsys.IID_IPropertyStore)
 
+  # Is not written to file.
+  property_key = propsys.PSGetPropertyKeyFromName('System.MIMEType')
+  property_value = propsys.PROPVARIANTType(None, pythoncom.VT_EMPTY)
+  property_store.SetValue(property_key, property_value)
+
   property_key = propsys.PSGetPropertyKeyFromName('System.Document.LastAuthor')
   property_value = propsys.PROPVARIANTType(None, pythoncom.VT_NULL)
   property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.Image.ResolutionUnit')
-  property_value = propsys.PROPVARIANTType(0x1234, pythoncom.VT_I2)
+  property_value = propsys.PROPVARIANTType(-1234, pythoncom.VT_I2)
   property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.Message.ToDoFlags')
-  property_value = propsys.PROPVARIANTType(0x12345678, pythoncom.VT_I4)
+  property_value = propsys.PROPVARIANTType(-12345678, pythoncom.VT_I4)
   property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.GPS.DOP')
@@ -57,17 +65,27 @@ if __name__ == '__main__':
   property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.Photo.MaxAperture')
-  property_value = propsys.PROPVARIANTType(1.2345, pythoncom.VT_R8)
+  property_value = propsys.PROPVARIANTType(1.2345678, pythoncom.VT_R8)
   property_store.SetValue(property_key, property_value)
 
-  # VT_CY
-  # VT_DATE
+  property_key = propsys.PSGetPropertyKeyFromName('System.TotalFileSize')
+  property_value = propsys.PROPVARIANTType(
+      decimal.Decimal(12345678), pythoncom.VT_CY)
+  property_store.SetValue(property_key, property_value)
+
+  current_time = pywintypes.Time(time.time())
+  property_key = propsys.PSGetPropertyKeyFromName('System.Media.DateEncoded')
+  property_value = propsys.PROPVARIANTType(current_time, pythoncom.VT_DATE)
+  property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.Title')
   property_value = propsys.PROPVARIANTType('My Title', pythoncom.VT_BSTR)
   property_store.SetValue(property_key, property_value)
 
-  # VT_ERROR
+  property_key = propsys.PSGetPropertyKeyFromName(
+      'System.Photo.FocalLengthDenominator')
+  property_value = propsys.PROPVARIANTType(0x12345678, pythoncom.VT_ERROR)
+  property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName(
       'System.Search.IsClosedDirectory')
@@ -81,9 +99,14 @@ if __name__ == '__main__':
   # property_value = propsys.PROPVARIANTType('My unknown', pythoncom.VT_UNKNOWN)
   # property_store.SetValue(property_key, property_value)
 
-  # VT_DECIMAL
+  # TypeError: Unsupported property type 0x0e
+  # property_key = propsys.PSGetPropertyKeyFromName('System.Media.Duration')
+  # property_value = propsys.PROPVARIANTType(123456789, pythoncom.VT_DECIMAL)
+  # property_store.SetValue(property_key, property_value)
 
-  # VT_I1
+  property_key = propsys.PSGetPropertyKeyFromName('System.Devices.BatteryLife')
+  property_value = propsys.PROPVARIANTType(-12, pythoncom.VT_I1)
+  property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.Photo.Flash')
   property_value = propsys.PROPVARIANTType(0x12, pythoncom.VT_UI1)
@@ -98,14 +121,24 @@ if __name__ == '__main__':
   property_value = propsys.PROPVARIANTType(0x12345678, pythoncom.VT_UI4)
   property_store.SetValue(property_key, property_value)
 
-  # VT_I8
+  property_key = propsys.PSGetPropertyKeyFromName(
+      'System.Devices.StorageFreeSpace')
+  property_value = propsys.PROPVARIANTType(-1234567890, pythoncom.VT_I8)
+  property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName('System.FileCount')
   property_value = propsys.PROPVARIANTType(0x123456789abcdef0, pythoncom.VT_UI8)
   property_store.SetValue(property_key, property_value)
 
-  # VT_INT
-  # VT_UINT
+  property_key = propsys.PSGetPropertyKeyFromName('System.Search.EntryID')
+  property_value = propsys.PROPVARIANTType(-12345678, pythoncom.VT_INT)
+  property_store.SetValue(property_key, property_value)
+
+  property_key = propsys.PSGetPropertyKeyFromName(
+      'System.Photo.ExposureTimeDenominator')
+  property_value = propsys.PROPVARIANTType(0x12345678, pythoncom.VT_UINT)
+  property_store.SetValue(property_key, property_value)
+
   # VT_VOID
   # VT_HRESULT
   # VT_PTR
@@ -126,10 +159,10 @@ if __name__ == '__main__':
   # VT_INT_PTR
   # VT_UINT_PTR
 
-  # TypeError: must be a pywintypes time object (got int)
-  # property_key = propsys.PSGetPropertyKeyFromName('System.Search.GatherTime')
-  # property_value = propsys.PROPVARIANTType(0x123456789abcdef0, pythoncom.VT_FILETIME)
-  # property_store.SetValue(property_key, property_value)
+  current_time = pywintypes.Time(time.time())
+  property_key = propsys.PSGetPropertyKeyFromName('System.Search.GatherTime')
+  property_value = propsys.PROPVARIANTType(current_time, pythoncom.VT_FILETIME)
+  property_store.SetValue(property_key, property_value)
 
   property_key = propsys.PSGetPropertyKeyFromName(
       'System.Music.SynchronizedLyrics')
@@ -175,6 +208,47 @@ if __name__ == '__main__':
   property_store.SetValue(property_key, property_value)
 
   # VT_VERSIONED_STREAM
+
+  # VT_VECTOR | VT_I2
+  # VT_VECTOR | VT_I4
+  # VT_VECTOR | VT_R4
+  # VT_VECTOR | VT_R8
+  # VT_VECTOR | VT_CY
+  # VT_VECTOR | VT_DATE
+
+  property_key = propsys.PSGetPropertyKeyFromName('System.Calendar.Resources')
+  property_value = propsys.PROPVARIANTType(
+      ['bstring1', 'bstring2', 'bstring3'],
+      pythoncom.VT_VECTOR | pythoncom.VT_BSTR)
+  property_store.SetValue(property_key, property_value)
+
+  # VT_VECTOR | VT_ERROR
+  # VT_VECTOR | VT_BOOL
+  # VT_VECTOR | VT_I1
+  # VT_VECTOR | VT_UI1
+  # VT_VECTOR | VT_UI2
+
+  property_key = propsys.PSGetPropertyKeyFromName(
+      'System.GPS.LongitudeNumerator')
+  property_value = propsys.PROPVARIANTType(
+      [1, 2, 3, 4, 5, 6, 7], pythoncom.VT_VECTOR | pythoncom.VT_UI4)
+  property_store.SetValue(property_key, property_value)
+
+  # VT_VECTOR | VT_I8
+  # VT_VECTOR | VT_UI8
+  # VT_VECTOR | VT_LPSTR
+
+  property_key = propsys.PSGetPropertyKeyFromName('System.Calendar.Resources')
+  property_value = propsys.PROPVARIANTType(
+      ['wstring1', 'wstring2', 'wstring3'],
+      pythoncom.VT_VECTOR | pythoncom.VT_LPWSTR)
+  property_store.SetValue(property_key, property_value)
+
+  # VT_VECTOR | VT_FILETIME
+  # VT_VECTOR | VT_CF
+  # VT_VECTOR | VT_CLSID
+
+  # VT_ARRAY | VT_I2
 
   interface = shortcut.QueryInterface(pythoncom.IID_IPersistFile)
 
