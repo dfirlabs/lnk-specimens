@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 """Script to generate Windows Shell link test files.
 
 Requires Windows and pywin32.
